@@ -50,7 +50,7 @@ variable "fastly_header_action" {
 variable "fastly_header_destination" {
   description = "The destination of the header"
   type        = string
-  default     = "http.Strict0Transport-Security"
+  default     = "http.Strict-Transport-Security"
 }
 
 variable "fastly_header_ignore_if_set" {
