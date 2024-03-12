@@ -50,7 +50,7 @@ variable "fastly_header_action" {
 variable "fastly_header_destination" {
   description = "The destination of the header"
   type        = string
-  default     = "http.Strict0Transport-Security"
+  default     = "http.Strict-Transport-Security"
 }
 
 variable "fastly_header_ignore_if_set" {
@@ -142,22 +142,66 @@ variable "fastly_request_setting_timer_support" {
   default     = false
 }
 
-
+################################
+# Backend Variables #
+################################
 variable "fastly_backends" {
-  description = "A list of backends to be added to the Fastly service"
+  description = <<EOF
+  A list of backends to be added to the Fastly service. Each object in the list has the following attributes:
+  - address (String) An IPv4, hostname, or IPv6 address for the Backend
+  - name (String) Name for this Backend. Must be unique to this Service. It is important to note that changing this attribute will delete and recreate the resource.
+  - auto_loadbalance (Boolean) Denotes if this Backend should be included in the pool of backends that requests are load balanced against. Default false
+  - between_bytes_timeout (Number) How long to wait between bytes in milliseconds. Default 10000
+  - connect_timeout (Number) How long to wait for a timeout in milliseconds. Default 1000
+  - error_threshold (Number) How many errors should be seen before this backend is considered unhealthy. Default 0
+  - first_byte_timeout (Number) How long to wait for the first byte in milliseconds. Default 15000
+  - healthcheck (String) The name of the healthcheck to use with this backend
+  - keepalive_time (Number) How long to keep a connection to the backend open in seconds. Default 60
+  - max_conn (Number) The maximum number of connections to the backend. Default 200
+  - max_tls_version (String) The maximum version of TLS the backend supports
+  - min_tls_version (String) The minimum version of TLS the backend supports
+  - override_host (String) The hostname to override the Host header
+  - port (Number) The port number of the address. Default 80
+  - request_condition (String) Name of a condition, which if met, will select this backend during a request.
+  - share_key (String) Value that when shared across backends will enable those backends to share the same health check.
+  - shield (String) The POP of the shield designated to reduce inbound load. Valid values for shield are included in the GET /datacenters API response
+  - ssl_ca_cert (String) CA certificate attached to origin.
+  - ssl_cert_hostname (String) Configure certificate validation. Does not affect SNI at all
+  - ssl_check_cert (Boolean) Check the backend certificate. Default true
+  - ssl_ciphers (String) Cipher list consisting of one or more cipher strings separated by colons. Commas or spaces are also acceptable separators but colons are normally used.
+  - ssl_client_cert (String) Client certificate attached to origin.
+  - ssl_client_key (String, Sensitive) Client key attached to origin.
+  - ssl_sni_hostname (String) SNI host name to use during SSL handshake. This is required when using SSL.
+  - use_ssl (Boolean) Use SSL for this backend. Default false
+  - weight (Number) Weight used to load balance this backend against others. Default 100
+  EOF
   type = list(object({
     name                  = string
     address               = string
-    port                  = number
-    auto_loadbalance      = bool
-    between_bytes_timeout = number
-    connect_timeout       = number
-    error_threshold       = number
-    first_byte_timeout    = number
-    max_conn              = number
-    ssl_check_cert        = bool
-    use_ssl               = bool
-    weight                = number
+    auto_loadbalance      = optional(bool)
+    between_bytes_timeout = optional(number)
+    connect_timeout       = optional(number)
+    error_threshold       = optional(number)
+    first_byte_timeout    = optional(number)
+    healthcheck           = optional(string)
+    keepalive_time        = optional(number)
+    max_conn              = optional(number)
+    max_tls_version       = optional(string)
+    min_tls_version       = optional(string)
+    override_host         = optional(string)
+    port                  = optional(number)
+    request_condition     = optional(string)
+    share_key             = optional(string)
+    shield                = optional(string)
+    ssl_ca_cert           = optional(string)
+    ssl_cert_hostname     = optional(string)
+    ssl_check_cert        = optional(bool)
+    ssl_ciphers           = optional(string)
+    ssl_client_cert       = optional(string)
+    ssl_client_key        = optional(string)
+    ssl_sni_hostname      = optional(string)
+    use_ssl               = optional(bool)
+    weight                = optional(number)
   }))
   default = [
     {

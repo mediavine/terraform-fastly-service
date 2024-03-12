@@ -25,18 +25,37 @@ resource "fastly_service_vcl" "this" {
   dynamic "backend" {
     for_each = var.fastly_backends
     content {
-      name                  = backend.value.name
-      address               = backend.value.address
-      port                  = backend.value.port
+      # required
+      name    = backend.value.name
+      address = backend.value.address
+
+      # optional
       auto_loadbalance      = backend.value.auto_loadbalance
       between_bytes_timeout = backend.value.between_bytes_timeout
       connect_timeout       = backend.value.connect_timeout
       error_threshold       = backend.value.error_threshold
       first_byte_timeout    = backend.value.first_byte_timeout
+      healthcheck           = backend.value.healthcheck
+      keepalive_time        = backend.value.keepalive_time
       max_conn              = backend.value.max_conn
+      max_tls_version       = backend.value.max_tls_version
+      min_tls_version       = backend.value.min_tls_version
+      override_host         = backend.value.override_host
+      port                  = backend.value.port
+      request_condition     = backend.value.request_condition
+      share_key             = backend.value.share_key
+      shield                = backend.value.shield
+      ssl_ca_cert           = backend.value.ssl_ca_cert
+      ssl_cert_hostname     = backend.value.ssl_cert_hostname
       ssl_check_cert        = backend.value.ssl_check_cert
+      ssl_ciphers           = backend.value.ssl_ciphers
+      ssl_client_cert       = backend.value.ssl_client_cert
+      ssl_client_key        = backend.value.ssl_client_key
+      ssl_sni_hostname      = backend.value.ssl_sni_hostname
       use_ssl               = backend.value.use_ssl
       weight                = backend.value.weight
+
+
     }
   }
 
